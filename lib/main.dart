@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import './widgets/question.dart';
+import './widgets/quiz.dart';
+import './widgets/result.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,44 +15,63 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  var currentQuestion = 0;
+  int currentQuestion = 0;
+  int total = 0;
 
-  void answerQuestion(int answer) {
+  final question = const [
+    {
+      'questionText': 'What\'s your favourite color?',
+      'answers': [
+        {'text': 'Black', 'score': 1},
+        {'text': 'Red', 'score': 2},
+        {'text': 'Green', 'score': 3},
+        {'text': 'White', 'score': 4},
+      ]
+    },
+    {
+      'questionText': 'What\'s your favourite animal?',
+      'answers': [
+        {'text': 'Cat', 'score': 1},
+        {'text': 'Dog', 'score': 2},
+        {'text': 'Lion', 'score': 3},
+        {'text': 'Cow', 'score': 4},
+      ]
+    },
+    {
+      'questionText': 'What\'s your favourite Car?',
+      'answers': [
+        {'text': 'Mercedes', 'score': 1},
+        {'text': 'BMW', 'score': 2},
+        {'text': 'AUDI', 'score': 3},
+        {'text': 'NISSA', 'score': 4},
+      ]
+    },
+  ];
+
+  void answerQuestion(Map answer) {
+    total += answer['score'];
+
     this.setState(() {
       currentQuestion++;
     });
   }
 
+  void reset() {
+    this.setState(() {
+      currentQuestion = 0;
+      total = 0;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<String> question = [
-      'What\'s your favourite color?',
-      'What\'s your favourite animal?',
-      'What\'s your favourite Car?',
-    ];
-
     return MaterialApp(
         home: Scaffold(
-      appBar: AppBar(
-        title: Text('Hello'),
-      ),
-      body: Column(
-        children: <Widget>[
-          Question(question.elementAt(currentQuestion)),
-          RaisedButton(
-            child: Text('Answer 1'),
-            onPressed: () => answerQuestion(1),
-          ),
-          RaisedButton(
-            child: Text('Answer 2'),
-            onPressed: () => answerQuestion(2),
-          ),
-          RaisedButton(
-            child: Text('Answer 3'),
-            onPressed: () => answerQuestion(2),
-          )
-        ],
-      ),
-    ));
+            appBar: AppBar(
+              title: Text('Hello'),
+            ),
+            body: currentQuestion < question.length
+                ? Quiz(question, currentQuestion, answerQuestion)
+                : Result(total, reset)));
   }
 }
